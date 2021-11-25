@@ -2,22 +2,47 @@ import React, { useState } from "react";
 import AppLoading from "expo-app-loading";
 import { Image, Text } from "react-native";
 import * as Font from "expo-font";
-import { Asset, useAssets } from "expo-asset";
+import { Asset } from "expo-asset";
 import { Ionicons } from "@expo/vector-icons"; /* 이미 설치되어있는 expo vector icon을 불러온다 Ionicons이름으로써 */
 import { loadAsync } from "expo-font";
 
-/* assets와 fonts를 preload만 한다면 hooks를 사용하는것이 간편하고 좋다 */
-export default function App() {
-  const [assets] = useAssets([
-    require("./archon.jpg"),
-  ]); /* useAssets hooks를 사용해서 줄인 코드 */
-  const [loaded] = Font.useFonts(
-    Ionicons.font
-  ); /* useFonts hooks를 사용하여 줄인 코드 */
-  if (!assets || !loaded) {
-    return <AppLoading />;
-  }
+const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
 
+const loadImages = (images) =>
+  images.map((image) => {
+    if (typeof image === "string") {
+      return Image.prefetch(image);
+    } else {
+      return Asset.loadAsync(image);
+    }
+  });
+
+/* hooks를 사용하지 않고 startLoading함수를 따로 만들어 사용하는것이 좀더 유연할 수 있다 */
+export default function App() {
+  const [ready, setReady] = useState(false);
+  const onFinish = () => setReady(true);
+  const startLoading = async () => {
+    const fonts = loadFonts([
+      Ionicons.font,
+    ]); /* Font.loadAsync를 여러번 사용할때를 위해 */
+    const images = loadImages([
+      require("./archon.jpg"),
+      "https://reactnative.dev/img/oss_logo.png",
+    ]); /* 이미지 로드를 여러번 사용할때를 위해 */
+    await Promise.all([
+      ...fonts,
+      ...images,
+    ]); /* 폰트의 프로미스와 이미지의 프로미스를 1개의 배열에 넣음 */
+  };
+  if (!ready) {
+    return (
+      <AppLoading
+        startAsync={startLoading}
+        onFinish={onFinish}
+        onError={console.error}
+      />
+    );
+  }
   return <Text>We are done loading!</Text>;
 }
 
