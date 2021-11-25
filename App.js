@@ -4,20 +4,38 @@ import { Image, Text } from "react-native";
 import * as Font from "expo-font";
 import { Asset } from "expo-asset";
 import { Ionicons } from "@expo/vector-icons"; /* 이미 설치되어있는 expo vector icon을 불러온다 Ionicons이름으로써 */
+import { loadAsync } from "expo-font";
+
+const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
+
+const loadImages = (images) =>
+  images.map((image) => {
+    if (typeof image === "string") {
+      return Image.prefetch(image);
+    } else {
+      return Asset.loadAsync(image);
+    }
+  });
 
 export default function App() {
   const [ready, setReady] = useState(false);
   const onFinish = () => setReady(true);
   const startLoading = async () => {
-    await Font.loadAsync(Ionicons.font); /* 웹에서 폰트를 로딩할때 사용 */
-    await Asset.loadAsync(
-      require("./archon.jpg")
-    ); /* 로컬데이터를 로딩할때 사용 */
-    await Image.prefetch(
-      "https://reactnative.dev/img/oss_logo.png"
-    ); /* 웹에서 이미지가 필요하면 이 방식으로 로딩 */
+    const fonts = loadFonts([
+      Ionicons.font,
+    ]); /* Font.loadAsync를 여러번 사용할때를 위해 */
+    const images = loadImages([
+      require("./archon.jpg"),
+      "https://reactnative.dev/img/oss_logo.png",
+    ]); /* 이미지 로드를 여러번 사용할때를 위해 */
+    await Promise.all([
+      ...fonts,
+      ...images,
+    ]); /* 폰트의 프로미스와 이미지의 프로미스를 1개의 배열에 넣음 */
   };
   if (!ready) {
+    /* 아래의 AppLoading에 있는 3가지 Props를 사용하기 위한 작업이 윗 부분이다 */
+    /* Hooks를 사용하면 Props와 위의 함수를 사용할 필요가 없다 */
     return (
       <AppLoading
         startAsync={startLoading}
