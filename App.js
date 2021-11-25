@@ -4,7 +4,7 @@ import { Image, Text } from "react-native";
 import * as Font from "expo-font";
 import { Asset } from "expo-asset";
 import { Ionicons } from "@expo/vector-icons"; /* 이미 설치되어있는 expo vector icon을 불러온다 Ionicons이름으로써 */
-import { loadAsync } from "expo-font";
+import { NavigationContainer } from "@react-navigation/native";
 
 const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
 
@@ -43,7 +43,11 @@ export default function App() {
       />
     );
   }
-  return <Text>We are done loading!</Text>;
+  return (
+    <NavigationContainer>
+      <Tabs />
+    </NavigationContainer>
+  );
 }
 
 /* <AppLoading/>컴포넌트는 로딩중 상태일때 강제로 로딩화면을 랜더링 해주는 컴포넌트이다.
@@ -53,3 +57,6 @@ onError = startAsync가 해결이 안되면 실행되는 함수
 startAsync = 로딩중에 해야될 작업이 들어있는 함수, 이 함수가 실행이 끝나면 Promise를 return한다*/
 
 /* 웹에 있는 이미지 데이터를 로딩할때는 React-native에 있는 Image컴포넌트를 사용한다 */
+
+/* <NavigationContainer><Tabs/></NavigationContainer> 
+탭스 네비게이션이나 스택 네비게이션을 사용하기 위해서는 네비게이션컨테이너 안에 넣어줘야한다 */

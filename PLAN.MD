@@ -6,3 +6,4 @@
 6. npm install @react-navigation/native -> 리액트네비게이션 설치
 7. expo install react-native-screens react-native-safe-area-context -> create-react-native-app으로 생성했기때문에 expo프로젝트에도 리엑트네비게이션을 사용할것이라고 알려줘야한다
 8. npx pod-install ios -> 맥북으로 개발중이라면 설치해야한다
+9. npm install @react-navigation/bottom-tabs -> 바텀탭네비게이션 설치
