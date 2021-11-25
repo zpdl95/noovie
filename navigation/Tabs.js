@@ -7,10 +7,15 @@ import Search from "../screens/Search";
 const Tab = createBottomTabNavigator();
 
 const Tabs = () => (
-  <Tab.Navigator>
-    <Tab.Screen name="Movies" component={Movies} />
+  <Tab.Navigator screenOptions={{ tabBarLabelStyle: { color: "tomato" } }}>
+    <Tab.Screen name="Movies" component={Movies} options={{ color: "blue" }} />
     <Tab.Screen name="TV" component={TV} />
     <Tab.Screen name="Search" component={Search} />
   </Tab.Navigator>
 );
 export default Tabs;
+
+/* screenOptions는 모든 스크린에 동일하게 적용된다.
+tabBarLabelStyle은 탭에 있는 글자옵션이다*/
+
+/* options는 각 스크린에 적용된다. */
