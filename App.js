@@ -4,7 +4,11 @@ import { Image, Text } from "react-native";
 import * as Font from "expo-font";
 import { Asset } from "expo-asset";
 import { Ionicons } from "@expo/vector-icons"; /* 이미 설치되어있는 expo vector icon을 불러온다 Ionicons이름으로써 */
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  DarkTheme,
+  DefaultTheme,
+} from "@react-navigation/native";
 
 const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
 
@@ -19,6 +23,8 @@ const loadImages = (images) =>
 
 /* hooks를 사용하지 않고 startLoading함수를 따로 만들어 사용하는것이 좀더 유연할 수 있다 */
 export default function App() {
+  const isDark = useColorScheme() === "dark";
+  /* 디바이스의 dark mode light mode를 감지하는 hooks다 */
   const [ready, setReady] = useState(false);
   const onFinish = () => setReady(true);
   const startLoading = async () => {
@@ -59,4 +65,5 @@ startAsync = 로딩중에 해야될 작업이 들어있는 함수, 이 함수가
 /* 웹에 있는 이미지 데이터를 로딩할때는 React-native에 있는 Image컴포넌트를 사용한다 */
 
 /* <NavigationContainer><Tabs/></NavigationContainer> 
-탭스 네비게이션이나 스택 네비게이션을 사용하기 위해서는 네비게이션컨테이너 안에 넣어줘야한다 */
+탭스 네비게이션이나 스택 네비게이션을 사용하기 위해서는 네비게이션컨테이너 안에 넣어줘야한다
+<NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}> 으로 기본 테마를 설정해줄 수 있다 */
