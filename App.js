@@ -10,6 +10,8 @@ import {
   DefaultTheme,
 } from "@react-navigation/native";
 import Root from "./navigation/Root";
+import { ThemeProvider } from "styled-components/native";
+import { darkTheme, lightTheme } from "./styled";
 
 const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
 
@@ -51,9 +53,11 @@ export default function App() {
     );
   }
   return (
-    <NavigationContainer>
-      <Root />
-    </NavigationContainer>
+    <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+      <NavigationContainer>
+        <Root />
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }
 
@@ -68,3 +72,6 @@ startAsync = 로딩중에 해야될 작업이 들어있는 함수, 이 함수가
 /* <NavigationContainer><Tabs/></NavigationContainer> 
 탭스 네비게이션이나 스택 네비게이션을 사용하기 위해서는 네비게이션컨테이너 안에 넣어줘야한다
 <NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}> 으로 기본 테마를 설정해줄 수 있다 */
+
+/* <ThemeProvider theme={isDark ? darkTheme : lightTheme}>를
+사용하여 모든 컴포넌트에서 색상테마를 가져다 쓸수 있게 되었다. */

@@ -9,15 +9,14 @@ const Btn = styled.View`
 `;
 
 const Title = styled.Text`
-  color: ${(props) => (props.selected ? "blue" : "red")};
-  /* ${(props) => props.selected} 임의로 생성한 props를 사용하는 방법
-    styled컴포넌트라서 사용가능하다 */
+  color: ${(props) => props.theme.textColor};
+  /* <ThemeProvider theme={isDark ? darkTheme : lightTheme}>를
+  이용하여 styledComponent에 props값으로 theme값을 전달해 사용 할 수 있다. */
 `;
 
 const Movies = ({ navigation: { navigate } }) => (
   <Btn onPress={() => navigate("Stack", { screen: "Three" })}>
-    <Title selected={false}>Movies</Title>
-    /* Title 컴포넌트에 selected props를 임의로 생성 */
+    <Title>Movies</Title>
   </Btn>
 );
 export default Movies;
