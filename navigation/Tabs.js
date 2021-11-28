@@ -18,7 +18,7 @@ const Tabs = () => {
           backgroundColor: isDark ? "grey" : "white",
         },
         tabBarActiveTintColor: isDark ? "yellow" : "grey",
-        tabBarInactiveTintColor: isDark ? "grey" : "white",
+        tabBarInactiveTintColor: isDark ? "white" : "white",
         headerStyle: {
           backgroundColor: isDark ? "grey" : "white",
         },

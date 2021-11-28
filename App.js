@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AppLoading from "expo-app-loading";
-import { Image, Text } from "react-native";
+import { Image, Text, useColorScheme } from "react-native";
 import * as Font from "expo-font";
 import { Asset } from "expo-asset";
 import { Ionicons } from "@expo/vector-icons"; /* 이미 설치되어있는 expo vector icon을 불러온다 Ionicons이름으로써 */
@@ -9,6 +9,7 @@ import {
   DarkTheme,
   DefaultTheme,
 } from "@react-navigation/native";
+import Root from "./navigation/Root";
 
 const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
 
@@ -51,7 +52,7 @@ export default function App() {
   }
   return (
     <NavigationContainer>
-      <Tabs />
+      <Root />
     </NavigationContainer>
   );
 }
