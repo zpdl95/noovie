@@ -1,10 +1,24 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
+import styled from "styled-components/native";
+
+const Btn = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Title = styled.Text`
+  color: ${(props) => (props.selected ? "blue" : "red")};
+  /* ${(props) => props.selected} 임의로 생성한 props를 사용하는 방법
+    styled컴포넌트라서 사용가능하다 */
+`;
 
 const Movies = ({ navigation: { navigate } }) => (
-  <TouchableOpacity onPress={() => navigate("Stack", { screen: "Three" })}>
-    <Text>Movies</Text>
-  </TouchableOpacity>
+  <Btn onPress={() => navigate("Stack", { screen: "Three" })}>
+    <Title selected={false}>Movies</Title>
+    /* Title 컴포넌트에 selected props를 임의로 생성 */
+  </Btn>
 );
 export default Movies;
 

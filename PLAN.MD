@@ -8,3 +8,4 @@
 8. npx pod-install ios -> 맥북으로 개발중이라면 설치해야한다
 9. npm install @react-navigation/bottom-tabs -> 바텀탭네비게이션 설치
 10. npm install @react-navigation/native-stack -> 네이티브스택네비게이션 설치
+11. npm install styled-components -> css스타일을 사용하기위해 설치. 사용하기 쉽고 prop에 접근가능한 스타일 컴포넌트
