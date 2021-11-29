@@ -1,4 +1,5 @@
 import React from "react";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { View, Text, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 
@@ -13,8 +14,15 @@ const Title = styled.Text`
   /* <ThemeProvider theme={isDark ? darkTheme : lightTheme}>를
   이용하여 styledComponent에 props값으로 theme값을 전달해 사용 할 수 있다. */
 `;
-
-const Movies = ({ navigation: { navigate } }) => (
+/* ↓ Movies를 Type해주려면 NativeStackScreenProps를 가져와야한다
+첫번째 인자는 RootStackParamList가 들어가야하지만 이번에는 그냥 any로 대체
+두번째 인자는 Screen의 이름을 넣는다 */
+/* React.FC는 Screen의 props를 type을 정해주기 위해 사용,
+type이 정해지면 자동완성기능이 생김,
+navigation과 navigate가 자동완성이 됨 */
+const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
+  navigation: { navigate },
+}) => (
   <Btn onPress={() => navigate("Stack", { screen: "Three" })}>
     <Title>Movies</Title>
   </Btn>
