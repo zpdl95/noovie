@@ -11,3 +11,4 @@
 11. npm install styled-components -> css스타일을 사용하기위해 설치. 사용하기 쉽고 prop에 접근가능한 스타일 컴포넌트
 12. npm install -D typescript @types/jest @types/react @types/react-native @types/react-test-renderer -> typescript설치 `https://reactnative.dev/docs/typescript` 그리고 tsconfig.json파일 생성
 13. npm install @types/styled-components @types/styled-components-react-native -> styled-components에 타입스크립트로 자동완성을 해주기 위해 설치 `https://styled-components.com/docs/api#typescript` 그리고 styled.d.ts파일 생성
+14. npm i react-native-web-swiper -> swiper패키지 다운로드. 스크롤 뷰로 만드는 대신 만들어진 패키지 사용`https://reactnative.directory/`에서 swiper로 검색
