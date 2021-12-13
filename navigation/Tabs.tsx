@@ -13,6 +13,9 @@ const Tabs = () => {
   /* 디바이스의 dark mode light mode를 감지하는 hooks다 */
   return (
     <Tab.Navigator
+      sceneContainerStyle={{
+        backgroundColor: isDark ? "#1e272e" : "white",
+      }}
       screenOptions={{
         tabBarStyle: {
           backgroundColor: isDark ? "#1e272e" : "white",
