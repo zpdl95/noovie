@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
-import { ActivityIndicator, Dimensions } from "react-native";
+import { ActivityIndicator, Dimensions, ScrollView } from "react-native";
 
 import Slide from "../components/Slide";
+import Poster from "../components/Poster";
 
 const API_KEY = "9db5794f039ec550f11e71750544ca9e";
 
@@ -14,6 +15,34 @@ const Loader = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
+`;
+
+const ListTitle = styled.Text`
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  margin-left: 30px;
+`;
+
+const TrendingScroll = styled.ScrollView`
+  margin-top: 20px;
+`;
+
+const Movie = styled.View`
+  margin-right: 30px;
+  align-items: center;
+`;
+
+const Name = styled.Text`
+  color: white;
+  font-size: 12px;
+  margin-top: 7px;
+`;
+
+const Vote = styled.Text`
+  margin-top: 3px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 10px;
 `;
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -65,7 +94,11 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
         autoplay
         autoplayTimeout={3.5}
         showsPagination={false}
-        containerStyle={{ width: "100%", height: SCREEN_HEIGHT / 4 }}
+        containerStyle={{
+          marginBottom: 30,
+          width: "100%",
+          height: SCREEN_HEIGHT / 4,
+        }}
       >
         {nowPlaying.map((movie) => (
           <Slide
@@ -78,6 +111,23 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
           />
         ))}
       </Swiper>
+      <ListTitle>Trending Movies</ListTitle>
+      <TrendingScroll
+        contentContainerStyle={{ paddingLeft: 30 }}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      >
+        {trending.map((movie) => (
+          <Movie key={movie.id}>
+            <Poster path={movie.poster_path} />
+            <Name>
+              {movie.original_title.slice(0, 12)}
+              {movie.original_title.length > 12 ? "..." : null}
+            </Name>
+            <Vote>⭐ {movie.vote_average}</Vote>
+          </Movie>
+        ))}
+      </TrendingScroll>
     </Container>
   );
 };
