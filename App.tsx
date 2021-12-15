@@ -70,4 +70,5 @@ startAsync = 로딩중에 해야될 작업이 들어있는 함수, 이 함수가
 <NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}> 으로 기본 테마를 설정해줄 수 있다 */
 
 /* <ThemeProvider theme={isDark ? darkTheme : lightTheme}>를
-사용하여 모든 컴포넌트에서 색상테마를 가져다 쓸수 있게 되었다. */
+사용하여 모든 컴포넌트에서 색상테마를 가져다 쓸수 있게 되었다.
+모든 컴포넌트는 props안에 theme prop이 들어가 있는것이다 */
