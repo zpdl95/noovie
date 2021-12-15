@@ -33,7 +33,7 @@ const Movie = styled.View`
   align-items: center;
 `;
 
-const Name = styled.Text`
+const Title = styled.Text`
   color: white;
   font-size: 12px;
   margin-top: 7px;
@@ -43,6 +43,38 @@ const Vote = styled.Text`
   margin-top: 3px;
   color: rgba(255, 255, 255, 0.8);
   font-size: 10px;
+`;
+
+const ListContainer = styled.View`
+  margin-bottom: 40px;
+`;
+
+const ComingSoonTitle = styled(ListTitle)`
+  margin-bottom: 30px;
+`;
+
+const HMovie = styled.View`
+  padding: 0 30px;
+  flex-direction: row;
+  margin-bottom: 30px;
+`;
+
+const HColumn = styled.View`
+  margin-left: 15px;
+  width: 80%;
+`;
+
+const Release = styled.Text`
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 10px;
+  margin-top: 5px;
+`;
+
+const Overview = styled.Text`
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 10px;
+  margin-top: 5px;
+  width: 80%;
 `;
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -111,23 +143,46 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
           />
         ))}
       </Swiper>
-      <ListTitle>Trending Movies</ListTitle>
-      <TrendingScroll
-        contentContainerStyle={{ paddingLeft: 30 }}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      >
-        {trending.map((movie) => (
-          <Movie key={movie.id}>
-            <Poster path={movie.poster_path} />
-            <Name>
-              {movie.original_title.slice(0, 12)}
-              {movie.original_title.length > 12 ? "..." : null}
-            </Name>
-            <Vote>⭐ {movie.vote_average}</Vote>
-          </Movie>
-        ))}
-      </TrendingScroll>
+      <ListContainer>
+        <ListTitle>Trending Movies</ListTitle>
+        <TrendingScroll
+          contentContainerStyle={{ paddingLeft: 30 }}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >
+          {trending.map((movie) => (
+            <Movie key={movie.id}>
+              <Poster path={movie.poster_path} />
+              <Title>
+                {movie.original_title.slice(0, 12)}
+                {movie.original_title.length > 12 ? "..." : null}
+              </Title>
+              <Vote>
+                {movie.vote_average > 0
+                  ? `⭐ ${movie.vote_average}`
+                  : "Coming soon"}
+              </Vote>
+            </Movie>
+          ))}
+        </TrendingScroll>
+      </ListContainer>
+      <ComingSoonTitle>Coming soon</ComingSoonTitle>
+      {upcoming.map((movie) => (
+        <HMovie key={movie.id}>
+          <Poster path={movie.poster_path} />
+          <HColumn>
+            <Title>{movie.original_title}</Title>
+            <Release>
+              {new Date(movie.release_date).toLocaleDateString()}
+            </Release>
+            <Overview>
+              {movie.overview.length > 150
+                ? `${movie.overview.slice(0, 150)} ...`
+                : `${movie.overview}`}
+            </Overview>
+          </HColumn>
+        </HMovie>
+      ))}
     </Container>
   );
 };
