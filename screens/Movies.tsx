@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
-import Swiper from "react-native-web-swiper";
-import { ActivityIndicator, Dimensions, StyleSheet } from "react-native";
+import Swiper from "react-native-swiper";
+import {
+  ActivityIndicator,
+  Dimensions,
+  StyleSheet,
+  useColorScheme,
+} from "react-native";
 import { makeImgPath } from "../utils";
 import { BlurView } from "expo-blur";
 
@@ -24,12 +29,44 @@ const BgImg = styled.Image``;
 
 const Title = styled.Text`
   font-size: 15px;
+  font-weight: 600;
+  color: white;
+`;
+
+const Overview = styled.Text`
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  margin-top: 10px;
+`;
+
+/* 스타일드컴포넌트의 확장컴포넌트 */
+const Vote = styled(Overview)`
+  margin-top: 5px;
+`;
+
+const Wrapper = styled.View`
+  flex-direction: row;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Column = styled.View`
+  width: 40%;
+  margin-left: 15px;
+`;
+
+const Poster = styled.Image`
+  width: 100px;
+  height: 160px;
+  border-radius: 7px;
 `;
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 /* 디바이스의 창의 크기를 가져오는 api */
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
+  const isDark = useColorScheme() === "dark";
   const [loading, setLoading] = useState(true);
   const [nowPlaying, setNowPlaying] = useState([]);
   const getNowPlaying = async () => {
@@ -51,9 +88,9 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   ) : (
     <Container>
       <Swiper
-        loop
-        timeout={3.5}
-        controlsEnabled={false}
+        autoplay
+        autoplayTimeout={3.5}
+        showsPagination={false}
         containerStyle={{ width: "100%", height: SCREEN_HEIGHT / 4 }}
       >
         {nowPlaying.map((movie) => (
@@ -62,10 +99,21 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
               style={StyleSheet.absoluteFill}
               source={{ uri: makeImgPath(movie.backdrop_path) }}
             />
-            <BlurView intensity={100} style={StyleSheet.absoluteFill}>
-              /* StyleSheet.absoluteFill 는 많이 사용하는 스타일패턴을 저장해
-              놓은것 */
-              <Title>{movie.original_title}</Title>
+            <BlurView
+              tint={isDark ? "dark" : "light"}
+              intensity={100}
+              style={StyleSheet.absoluteFill}
+            >
+              <Wrapper>
+                <Poster source={{ uri: makeImgPath(movie.poster_path) }} />
+                <Column>
+                  <Title>{movie.original_title}</Title>
+                  <Overview>
+                    {movie.overview.split(" ").slice(0, 30).join(" ")} ...
+                  </Overview>
+                  <Vote>⭐ {movie.vote_average}</Vote>
+                </Column>
+              </Wrapper>
             </BlurView>
           </View>
         ))}
@@ -74,3 +122,5 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   );
 };
 export default Movies;
+
+/* uri는 웹 기술에서 사용하는 논리 or 물리적 리소스를 식별한다 */
