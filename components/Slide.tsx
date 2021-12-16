@@ -39,19 +39,19 @@ const Column = styled.View`
 
 /* 타입스크립트의 인터페이스 설정 */
 interface SlideProps {
-  backdrop_path: string;
-  poster_path: string;
-  original_title: string;
-  vote_average: number;
+  backdropPath: string;
+  posterPath: string;
+  originalTitle: string;
+  voteAverage: number;
   overview: string;
 }
 
 /* 설정한 인터페이스를 컴포넌트에 적용 */
 const Slide: React.FC<SlideProps> = ({
-  backdrop_path,
-  poster_path,
-  original_title,
-  vote_average,
+  backdropPath,
+  posterPath,
+  originalTitle,
+  voteAverage,
   overview,
 }) => {
   const isDark = useColorScheme() === "dark";
@@ -59,7 +59,7 @@ const Slide: React.FC<SlideProps> = ({
     <View style={{ flex: 1 }}>
       <BgImg
         style={StyleSheet.absoluteFill}
-        source={{ uri: makeImgPath(backdrop_path) }}
+        source={{ uri: makeImgPath(backdropPath) }}
       />
       <BlurView
         tint={isDark ? "dark" : "light"}
@@ -67,12 +67,14 @@ const Slide: React.FC<SlideProps> = ({
         style={StyleSheet.absoluteFill}
       >
         <Wrapper>
-          <Poster path={poster_path} />
+          <Poster path={posterPath} />
           <Column>
-            <Title isDark={isDark}>{original_title}</Title>
-            <Vote isDark={isDark}>⭐ {vote_average}</Vote>
+            <Title isDark={isDark}>{originalTitle}</Title>
+            <Vote isDark={isDark}>⭐ {voteAverage}</Vote>
             <Overview isDark={isDark}>
-              {overview.split(" ").slice(0, 30).join(" ")} ...
+              {overview.length > 30
+                ? `${overview.split(" ").slice(0, 30).join(" ")} ...`
+                : `${overview}`}
             </Overview>
           </Column>
         </Wrapper>
