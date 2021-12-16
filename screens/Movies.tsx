@@ -24,7 +24,7 @@ const ListTitle = styled.Text`
   margin-left: 30px;
 `;
 
-const TrendingScroll = styled.ScrollView`
+const TrendingScroll = styled.FlatList`
   margin-top: 20px;
 `;
 
@@ -34,6 +34,10 @@ const ListContainer = styled.View`
 
 const ComingSoonTitle = styled(ListTitle)`
   margin-bottom: 30px;
+`;
+
+const VSeperator = styled.View`
+  width: 30px;
 `;
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -118,19 +122,20 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
       <ListContainer>
         <ListTitle>Trending Movies</ListTitle>
         <TrendingScroll
-          contentContainerStyle={{ paddingLeft: 30 }}
           horizontal
+          keyExtractor={(item) => item.id + ""}
           showsHorizontalScrollIndicator={false}
-        >
-          {trending.map((movie) => (
+          contentContainerStyle={{ paddingHorizontal: 30 }}
+          data={trending}
+          ItemSeparatorComponent={VSeperator}
+          renderItem={({ item }) => (
             <VMedia
-              key={movie.id}
-              posterPath={movie.poster_path}
-              originalTitle={movie.original_title}
-              voteAverage={movie.vote_average}
+              posterPath={item.poster_path}
+              originalTitle={item.original_title}
+              voteAverage={item.vote_average}
             />
-          ))}
-        </TrendingScroll>
+          )}
+        />
       </ListContainer>
       <ComingSoonTitle>Coming soon</ComingSoonTitle>
       {upcoming.map((movie) => (
@@ -151,3 +156,16 @@ export default Movies;
 
 /* 컴포넌트에 넣고 싶은 prop이 있으면 이름을 정해주고 값을 넣어주면 된다
 ex) <Title isDark={isDark}> */
+
+/* ScrollView는 모든 자식 컴포넌트를 한번에 렌더링한다. 따라서 많은
+데이터를 가지고 있다면 렌더링에 시간이 오래 걸린다. 이 대안으로 나온것이
+FlatList다. FlatList는 추가적이 화면 출력이 필요하면 그때 렌더링한다. */
+
+/* FlatList에 있는 ListHeaderComponent속성은 해당 Flatlist가 렌더링 하는
+컴포넌트 위에 컴포넌트를 렌더링할 수 있도록 해주는 기능이 있다. */
+
+/* FlatList는 array데이터를 받아 map()방식으로 표현해 준다
+data prop에 데이터를 array형 데이터를 넣어주고
+renderItem에 컴포넌트를 리턴하는 함수를 넣어준다. 이 함수는 {item, index, seperate} 인자를 받는다
+ItemSeparatorComponent는 item사이에 넣을 컴포넌트를 넣으면 된다
+keyExtractor는 각각의 데이터에서 key값으로 사용할 데이터(문자열)를 리턴 받는다.  */
