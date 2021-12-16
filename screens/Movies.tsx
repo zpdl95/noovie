@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
-import { ActivityIndicator, Dimensions, ScrollView } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  RefreshControl,
+  ScrollView,
+} from "react-native";
 
 import Slide from "../components/Slide";
 import Poster from "../components/Poster";
@@ -81,6 +86,7 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 /* 디바이스의 창의 크기를 가져오는 api */
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [nowPlaying, setNowPlaying] = useState([]);
   const [upcoming, setUpcoming] = useState([]);
@@ -116,12 +122,24 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  /* 새로고침할 경우 실행할 함수 */
+  const onRefreshing = async () => {
+    setRefreshing(true);
+    await getData();
+    setRefreshing(false);
+  };
+
   return loading ? (
     <Loader>
       <ActivityIndicator color="white" />
     </Loader>
   ) : (
-    <Container>
+    <Container
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefreshing} />
+      }
+    >
       <Swiper
         autoplay
         autoplayTimeout={3.5}
