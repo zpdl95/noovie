@@ -14,3 +14,4 @@
 14. npm i react-native-web-swiper -> swiper패키지 다운로드. 스크롤 뷰로 만드는 대신 만들어진 패키지 사용`https://reactnative.directory/`에서 swiper로 검색
 15. expo install expo-blur -> expo의 블러처리 뷰컴포넌트를 설치(npx pod-install ios 맥사용중이면 해야함)
 16. npm i react-native-swiper@next -> 위의 swiper는 웹, android, ios 전부다 가능. 이놈은 android, ios만 가능(ios에서는 웹swiper을 사용하면 움직여서 이놈으로 바꿈)
+17. npm i react-query -> Hooks를 통해 fetch데이터에 접근할 수 있게 해줌. loading state도 알려주고, caching, 무한스크롤도 지원함

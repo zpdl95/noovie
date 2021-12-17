@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import AppLoading from "expo-app-loading";
-import { Image, Text, useColorScheme } from "react-native";
+import { Image, useColorScheme } from "react-native";
 import * as Font from "expo-font";
 import { Asset } from "expo-asset";
 import { Ionicons } from "@expo/vector-icons"; /* 이미 설치되어있는 expo vector icon을 불러온다 Ionicons이름으로써 */
 import { NavigationContainer } from "@react-navigation/native";
-import Root from "./navigation/Root";
 import { ThemeProvider } from "styled-components/native";
+import { QueryClient, QueryClientProvider } from "react-query";
+import Root from "./navigation/Root";
 import { darkTheme, lightTheme } from "./theme";
+
+/* reactQuery 클라이언트 생성 */
+const queryClient = new QueryClient();
 
 const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
 
@@ -49,11 +53,13 @@ export default function App() {
     );
   }
   return (
-    <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-      <NavigationContainer>
-        <Root />
-      </NavigationContainer>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+        <NavigationContainer>
+          <Root />
+        </NavigationContainer>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 
@@ -72,3 +78,6 @@ startAsync = 로딩중에 해야될 작업이 들어있는 함수, 이 함수가
 /* <ThemeProvider theme={isDark ? darkTheme : lightTheme}>를
 사용하여 모든 컴포넌트에서 색상테마를 가져다 쓸수 있게 되었다.
 모든 컴포넌트는 props안에 theme prop이 들어가 있는것이다 */
+
+/* reactQuery는 <QueryClientProvider client={queryClient}>로 앱을 감싸야 사용 가능 
+`https://maxkim-j.github.io/posts/react-query-preview`리액트 쿼리 설명 */
