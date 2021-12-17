@@ -17,6 +17,7 @@ const Tabs = () => {
         backgroundColor: isDark ? "#1e272e" : "white",
       }}
       screenOptions={{
+        unmountOnBlur: true,
         tabBarStyle: {
           backgroundColor: isDark ? "#1e272e" : "white",
         },
@@ -89,6 +90,7 @@ const Tabs = () => {
 export default Tabs;
 
 /* screenOptions는 모든 스크린에 동일하게 적용된다.
-tabBarLabelStyle은 탭에 있는 글자옵션이다*/
+tabBarLabelStyle은 탭에 있는 글자옵션이다 
+unmountOnBlur: true,는 컴포넌트를 언마운트하는 옵션, 화면을 나가면 화면데이터가 삭제됨 */
 
 /* options는 각 스크린에 적용된다. */

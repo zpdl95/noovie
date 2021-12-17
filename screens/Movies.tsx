@@ -6,6 +6,8 @@ import { ActivityIndicator, Dimensions, FlatList } from "react-native";
 import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
 import VMedia from "../components/VMedia";
+import { useQuery } from "react-query";
+import { moviesApi } from "../api";
 
 const Loader = styled.View`
   flex: 1;
@@ -40,13 +42,27 @@ const HSeperator = styled.View`
   height: 20px;
 `;
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 /* 디바이스의 창의 크기를 가져오는 api */
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   const [refreshing, setRefreshing] = useState(false);
-
-  /* react-query의 useQuery를 사용할 것이기 때문에 필요없는 state를 삭제 */
+  /* react-query는 useQuery hook을 가지고 있음
+  첫번째 인자는 key, 두번째 인자는 fetcher
+  key에 data를 캐싱한다
+  useQuery는 fetch에서 일어나는 모든걸 추적함 */
+  const { isLoading: nowPlayingLoading, data: nowPlayingData } = useQuery(
+    "nowPlaying",
+    moviesApi.nowPlaying
+  );
+  const { isLoading: upcomingLoading, data: upcomingData } = useQuery(
+    "upComing",
+    moviesApi.upcoming
+  );
+  const { isLoading: trendingLoading, data: trendingData } = useQuery(
+    "trending",
+    moviesApi.trending
+  );
 
   /* 새로고침할 경우 실행할 함수 */
   const onRefresh = async () => {};
@@ -70,6 +86,8 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
 
   const movieKeyExtractor = (item) => item.id + "";
 
+  const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
+
   return loading ? (
     <Loader>
       <ActivityIndicator color="white" />
@@ -90,7 +108,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
               height: SCREEN_HEIGHT / 4,
             }}
           >
-            {nowPlaying.map((movie) => (
+            {nowPlayingData.results.map((movie) => (
               <Slide
                 key={movie.id}
                 backdropPath={movie.backdrop_path}
@@ -108,7 +126,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
               keyExtractor={movieKeyExtractor}
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ paddingHorizontal: 30 }}
-              data={trending}
+              data={trendingData.results}
               ItemSeparatorComponent={VSeperator}
               renderItem={renderVMedia}
             />
@@ -116,7 +134,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
           <ComingSoonTitle>Coming soon</ComingSoonTitle>
         </>
       }
-      data={upcoming}
+      data={upcomingData.results}
       keyExtractor={movieKeyExtractor}
       ItemSeparatorComponent={HSeperator}
       renderItem={renderHMedia}

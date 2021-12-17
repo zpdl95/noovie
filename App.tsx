@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AppLoading from "expo-app-loading";
-import { Image, useColorScheme } from "react-native";
+import { Image, useColorScheme, LogBox } from "react-native";
 import * as Font from "expo-font";
 import { Asset } from "expo-asset";
 import { Ionicons } from "@expo/vector-icons"; /* 이미 설치되어있는 expo vector icon을 불러온다 Ionicons이름으로써 */
@@ -9,6 +9,9 @@ import { ThemeProvider } from "styled-components/native";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Root from "./navigation/Root";
 import { darkTheme, lightTheme } from "./theme";
+
+/* 이상한 오류가 떠서 무시 */
+LogBox.ignoreLogs(["Setting a timer for"]);
 
 /* reactQuery 클라이언트 생성 */
 const queryClient = new QueryClient();
@@ -26,8 +29,8 @@ const loadImages = (images) =>
 
 /* hooks를 사용하지 않고 startLoading함수를 따로 만들어 사용하는것이 좀더 유연할 수 있다 */
 export default function App() {
-  const isDark = useColorScheme() === "dark";
   /* 디바이스의 dark mode light mode를 감지하는 hooks다 */
+  const isDark = useColorScheme() === "dark";
   const [ready, setReady] = useState(false);
   const onFinish = () => setReady(true);
   const startLoading = async () => {
