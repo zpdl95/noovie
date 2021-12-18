@@ -7,7 +7,7 @@ import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
 import VMedia from "../components/VMedia";
 import { useQuery, useQueryClient } from "react-query";
-import { moviesApi } from "../api";
+import { Movie, MovieResponse, moviesApi } from "../api";
 
 const Loader = styled.View`
   flex: 1;
@@ -22,9 +22,11 @@ const ListTitle = styled.Text`
   margin-left: 30px;
 `;
 
+/* react Native의 FlatList가 아닌 styled-components자체에서 가지고있는
+FlatList를 사용하기 때문에 type of FlatList(react native자체의 FlatList)를 선언 */
 const TrendingScroll = styled.FlatList`
   margin-top: 20px;
-`;
+` as unknown as typeof FlatList;
 
 const ListContainer = styled.View`
   margin-bottom: 40px;
@@ -62,17 +64,17 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     isLoading: nowPlayingLoading,
     data: nowPlayingData,
     isRefetching: isRefetchingNowPlaying,
-  } = useQuery(["movies", "nowPlaying"], moviesApi.nowPlaying);
+  } = useQuery<MovieResponse>(["movies", "nowPlaying"], moviesApi.nowPlaying);
   const {
     isLoading: upcomingLoading,
     data: upcomingData,
     isRefetching: isRefetchingUpcoming,
-  } = useQuery(["movies", "upComing"], moviesApi.upcoming);
+  } = useQuery<MovieResponse>(["movies", "upComing"], moviesApi.upcoming);
   const {
     isLoading: trendingLoading,
     data: trendingData,
     isRefetching: isrefetchingTrending,
-  } = useQuery(["movies", "trending"], moviesApi.trending);
+  } = useQuery<MovieResponse>(["movies", "trending"], moviesApi.trending);
 
   /* 새로고침할 경우 실행할 함수 */
   const onRefresh = async () => {
@@ -80,34 +82,36 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     queryClient.refetchQueries(["movies"]);
   };
 
-  const renderVMedia = ({ item }) => (
+  const renderVMedia = ({ item }: { item: Movie }) => (
     <VMedia
-      posterPath={item.poster_path}
+      posterPath={item.poster_path || ""}
       originalTitle={item.original_title}
       voteAverage={item.vote_average}
     />
   );
 
-  const renderHMedia = ({ item }) => (
+  const renderHMedia = ({ item }: { item: Movie }) => (
     <HMedia
-      posterPath={item.poster_path}
+      posterPath={item.poster_path || ""}
       originalTitle={item.original_title}
       overview={item.overview}
       releaseDate={item.release_date}
     />
   );
 
-  const movieKeyExtractor = (item) => item.id + "";
+  const movieKeyExtractor = (item: Movie) => item.id + "";
 
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
   const refreshing =
     isRefetchingNowPlaying || isRefetchingUpcoming || isrefetchingTrending;
-  console.log(refreshing);
+
+  /* 'upcomingData ?' 와 같이 작성하는 이유는 typescript를 작성할때
+      이 데이터가 있을 수 도 있고 없을 수도 있어서 '?'를 넣어줘야 한다 */
   return loading ? (
     <Loader>
       <ActivityIndicator color="white" />
     </Loader>
-  ) : (
+  ) : upcomingData ? (
     <FlatList
       refreshing={refreshing}
       onRefresh={onRefresh}
@@ -123,11 +127,11 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
               height: SCREEN_HEIGHT / 4,
             }}
           >
-            {nowPlayingData.results.map((movie) => (
+            {nowPlayingData?.results.map((movie) => (
               <Slide
                 key={movie.id}
-                backdropPath={movie.backdrop_path}
-                posterPath={movie.poster_path}
+                backdropPath={movie.backdrop_path || ""}
+                posterPath={movie.poster_path || ""}
                 originalTitle={movie.original_title}
                 voteAverage={movie.vote_average}
                 overview={movie.overview}
@@ -136,15 +140,17 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
           </Swiper>
           <ListContainer>
             <ListTitle>Trending Movies</ListTitle>
-            <TrendingScroll
-              horizontal
-              keyExtractor={movieKeyExtractor}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: 30 }}
-              data={trendingData.results}
-              ItemSeparatorComponent={VSeperator}
-              renderItem={renderVMedia}
-            />
+            {trendingData ? (
+              <TrendingScroll
+                horizontal
+                keyExtractor={movieKeyExtractor}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingHorizontal: 30 }}
+                data={trendingData.results}
+                ItemSeparatorComponent={VSeperator}
+                renderItem={renderVMedia}
+              />
+            ) : null}
           </ListContainer>
           <ComingSoonTitle>Coming soon</ComingSoonTitle>
         </>
@@ -154,7 +160,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
       ItemSeparatorComponent={HSeperator}
       renderItem={renderHMedia}
     />
-  );
+  ) : null;
 };
 export default Movies;
 
