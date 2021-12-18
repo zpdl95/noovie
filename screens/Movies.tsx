@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
@@ -6,7 +6,7 @@ import { ActivityIndicator, Dimensions, FlatList } from "react-native";
 import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
 import VMedia from "../components/VMedia";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { moviesApi } from "../api";
 
 const Loader = styled.View`
@@ -46,34 +46,38 @@ const HSeperator = styled.View`
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
+  /* queryClient는 모든 cache, query를 관리함 
+  useQueryClient()를 사용해 접근가능 */
+  const queryClient = useQueryClient();
+
   /* react-query는 useQuery hook을 가지고 있음
   첫번째 인자는 key, 두번째 인자는 fetcher
   key에 data를 캐싱한다
-  useQuery는 fetch에서 일어나는 모든걸 추적함 */
+  useQuery는 fetch에서 일어나는 모든걸 추적함
+  key는 string타입으로 넣을수있고, array타입으로 넣을 수도 있다.
+  array타입을 사용해서 category를 만들어 주거나 변수를 추가할 수 있다.
+  `useQuery(["movies", "nowPlaying"], ...)` movies이라는 category에 nowPlaying라는 id를 줌
+  `useQuery(["movies", "nowPlaying", {preview: true}], ...)` {preview: ture}라는 변수를 추가 */
   const {
     isLoading: nowPlayingLoading,
     data: nowPlayingData,
-    refetch: refetchNowPlaying,
     isRefetching: isRefetchingNowPlaying,
-  } = useQuery("nowPlaying", moviesApi.nowPlaying);
+  } = useQuery(["movies", "nowPlaying"], moviesApi.nowPlaying);
   const {
     isLoading: upcomingLoading,
     data: upcomingData,
-    refetch: refetchUpcoming,
     isRefetching: isRefetchingUpcoming,
-  } = useQuery("upComing", moviesApi.upcoming);
+  } = useQuery(["movies", "upComing"], moviesApi.upcoming);
   const {
     isLoading: trendingLoading,
     data: trendingData,
-    refetch: refetchTrending,
     isRefetching: isrefetchingTrending,
-  } = useQuery("trending", moviesApi.trending);
+  } = useQuery(["movies", "trending"], moviesApi.trending);
 
   /* 새로고침할 경우 실행할 함수 */
   const onRefresh = async () => {
-    refetchNowPlaying();
-    refetchUpcoming();
-    refetchTrending();
+    /* movies category를 가진 쿼리를 모두 refetch함 */
+    queryClient.refetchQueries(["movies"]);
   };
 
   const renderVMedia = ({ item }) => (
@@ -98,7 +102,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
   const refreshing =
     isRefetchingNowPlaying || isRefetchingUpcoming || isrefetchingTrending;
-
+  console.log(refreshing);
   return loading ? (
     <Loader>
       <ActivityIndicator color="white" />
