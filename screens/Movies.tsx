@@ -46,26 +46,35 @@ const HSeperator = styled.View`
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
-  const [refreshing, setRefreshing] = useState(false);
   /* react-query는 useQuery hook을 가지고 있음
   첫번째 인자는 key, 두번째 인자는 fetcher
   key에 data를 캐싱한다
   useQuery는 fetch에서 일어나는 모든걸 추적함 */
-  const { isLoading: nowPlayingLoading, data: nowPlayingData } = useQuery(
-    "nowPlaying",
-    moviesApi.nowPlaying
-  );
-  const { isLoading: upcomingLoading, data: upcomingData } = useQuery(
-    "upComing",
-    moviesApi.upcoming
-  );
-  const { isLoading: trendingLoading, data: trendingData } = useQuery(
-    "trending",
-    moviesApi.trending
-  );
+  const {
+    isLoading: nowPlayingLoading,
+    data: nowPlayingData,
+    refetch: refetchNowPlaying,
+    isRefetching: isRefetchingNowPlaying,
+  } = useQuery("nowPlaying", moviesApi.nowPlaying);
+  const {
+    isLoading: upcomingLoading,
+    data: upcomingData,
+    refetch: refetchUpcoming,
+    isRefetching: isRefetchingUpcoming,
+  } = useQuery("upComing", moviesApi.upcoming);
+  const {
+    isLoading: trendingLoading,
+    data: trendingData,
+    refetch: refetchTrending,
+    isRefetching: isrefetchingTrending,
+  } = useQuery("trending", moviesApi.trending);
 
   /* 새로고침할 경우 실행할 함수 */
-  const onRefresh = async () => {};
+  const onRefresh = async () => {
+    refetchNowPlaying();
+    refetchUpcoming();
+    refetchTrending();
+  };
 
   const renderVMedia = ({ item }) => (
     <VMedia
@@ -87,6 +96,8 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   const movieKeyExtractor = (item) => item.id + "";
 
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
+  const refreshing =
+    isRefetchingNowPlaying || isRefetchingUpcoming || isrefetchingTrending;
 
   return loading ? (
     <Loader>
