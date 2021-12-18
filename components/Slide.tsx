@@ -72,8 +72,8 @@ const Slide: React.FC<SlideProps> = ({
             <Title isDark={isDark}>{originalTitle}</Title>
             <Vote isDark={isDark}>⭐ {voteAverage}</Vote>
             <Overview isDark={isDark}>
-              {overview.length > 30
-                ? `${overview.split(" ").slice(0, 30).join(" ")} ...`
+              {overview.length > 100
+                ? `${overview.split(" ").slice(0, 21).join(" ")} ...`
                 : `${overview}`}
             </Overview>
           </Column>

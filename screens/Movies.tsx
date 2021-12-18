@@ -2,13 +2,13 @@ import React from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
-import { ActivityIndicator, Dimensions, FlatList } from "react-native";
+import { Dimensions, FlatList } from "react-native";
 import { useQuery, useQueryClient } from "react-query";
 import { Movie, MovieResponse, moviesApi } from "../api";
 import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
-import VMedia from "../components/VMedia";
 import Loader from "../components/Loader";
+import HList from "../components/HList";
 
 const ListTitle = styled.Text`
   color: white;
@@ -17,22 +17,8 @@ const ListTitle = styled.Text`
   margin-left: 30px;
 `;
 
-/* react Native의 FlatList가 아닌 styled-components자체에서 가지고있는
-FlatList를 사용하기 때문에 type of FlatList(react native자체의 FlatList)를 선언 */
-const TrendingScroll = styled.FlatList`
-  margin-top: 20px;
-` as unknown as typeof FlatList;
-
-const ListContainer = styled.View`
-  margin-bottom: 20px;
-`;
-
 const ComingSoonTitle = styled(ListTitle)`
   margin-bottom: 20px;
-`;
-
-const VSeperator = styled.View`
-  width: 20px;
 `;
 
 const HSeperator = styled.View`
@@ -77,14 +63,6 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     queryClient.refetchQueries(["movies"]);
   };
 
-  const renderVMedia = ({ item }: { item: Movie }) => (
-    <VMedia
-      posterPath={item.poster_path || ""}
-      originalTitle={item.original_title}
-      voteAverage={item.vote_average}
-    />
-  );
-
   const renderHMedia = ({ item }: { item: Movie }) => (
     <HMedia
       posterPath={item.poster_path || ""}
@@ -99,14 +77,6 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
   const refreshing =
     isRefetchingNowPlaying || isRefetchingUpcoming || isrefetchingTrending;
-  console.log("**************************");
-  console.log("nowPlaying");
-  console.log(isRefetchingNowPlaying);
-  console.log("upcoming");
-  console.log(isRefetchingUpcoming);
-  console.log("trending");
-  console.log(isrefetchingTrending);
-  console.log("--------------------------");
 
   /* 'upcomingData ?' 와 같이 작성하는 이유는 typescript를 작성할때
       이 데이터가 있을 수 도 있고 없을 수도 있어서 '?'를 넣어줘야 한다 */
@@ -123,7 +93,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
             autoplayTimeout={3.5}
             showsPagination={false}
             containerStyle={{
-              marginBottom: 30,
+              marginBottom: 20,
               width: "100%",
               height: SCREEN_HEIGHT / 4,
             }}
@@ -139,20 +109,9 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
               />
             ))}
           </Swiper>
-          <ListContainer>
-            <ListTitle>Trending Movies</ListTitle>
-            {trendingData ? (
-              <TrendingScroll
-                horizontal
-                keyExtractor={movieKeyExtractor}
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingHorizontal: 30 }}
-                data={trendingData.results}
-                ItemSeparatorComponent={VSeperator}
-                renderItem={renderVMedia}
-              />
-            ) : null}
-          </ListContainer>
+          {trendingData ? (
+            <HList title="Trending Movies" data={trendingData?.results} />
+          ) : null}
           <ComingSoonTitle>Coming soon</ComingSoonTitle>
         </>
       }

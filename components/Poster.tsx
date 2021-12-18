@@ -3,7 +3,7 @@ import styled from "styled-components/native";
 import { makeImgPath } from "../utils";
 
 const Img = styled.Image`
-  width: 90px;
+  width: 100px;
   height: 140px;
   border-radius: 7px;
   background-color: rgba(255, 255, 255, 0.5);
