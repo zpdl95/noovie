@@ -23,7 +23,7 @@ const Overview = styled.Text`
 const Release = styled.Text`
   color: white;
   font-size: 12px;
-  margin-vertical: 10px;
+  margin-vertical: 7px;
   font-weight: 500;
   opacity: 0.6;
 `;

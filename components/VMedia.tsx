@@ -10,8 +10,9 @@ const Movie = styled.View`
 const Title = styled.Text`
   color: white;
   font-weight: 600;
-  margin-top: 7px;
-  margin-bottom: 5px;
+  font-size: 14px;
+  margin-top: 3px;
+  margin-bottom: 3px;
 `;
 
 interface VMediaProps {

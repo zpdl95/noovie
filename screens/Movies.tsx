@@ -3,17 +3,12 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
 import { ActivityIndicator, Dimensions, FlatList } from "react-native";
+import { useQuery, useQueryClient } from "react-query";
+import { Movie, MovieResponse, moviesApi } from "../api";
 import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
 import VMedia from "../components/VMedia";
-import { useQuery, useQueryClient } from "react-query";
-import { Movie, MovieResponse, moviesApi } from "../api";
-
-const Loader = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`;
+import Loader from "../components/Loader";
 
 const ListTitle = styled.Text`
   color: white;
@@ -29,15 +24,15 @@ const TrendingScroll = styled.FlatList`
 ` as unknown as typeof FlatList;
 
 const ListContainer = styled.View`
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 `;
 
 const ComingSoonTitle = styled(ListTitle)`
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 `;
 
 const VSeperator = styled.View`
-  width: 30px;
+  width: 20px;
 `;
 
 const HSeperator = styled.View`
@@ -104,13 +99,19 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
   const refreshing =
     isRefetchingNowPlaying || isRefetchingUpcoming || isrefetchingTrending;
+  console.log("**************************");
+  console.log("nowPlaying");
+  console.log(isRefetchingNowPlaying);
+  console.log("upcoming");
+  console.log(isRefetchingUpcoming);
+  console.log("trending");
+  console.log(isrefetchingTrending);
+  console.log("--------------------------");
 
   /* 'upcomingData ?' 와 같이 작성하는 이유는 typescript를 작성할때
       이 데이터가 있을 수 도 있고 없을 수도 있어서 '?'를 넣어줘야 한다 */
   return loading ? (
-    <Loader>
-      <ActivityIndicator color="white" />
-    </Loader>
+    <Loader />
   ) : upcomingData ? (
     <FlatList
       refreshing={refreshing}
