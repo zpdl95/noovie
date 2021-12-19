@@ -32,6 +32,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   /* isRefetching을 이용해서 refreshing을 만들면 component는 생성할때마나 refreshing이 동작해서 불편함
   때문에 refreshing state를 만들어 사용 */
   const [refreshing, setRefreshing] = useState(false);
+
   /* queryClient는 모든 cache, query를 관리함 
   useQueryClient()를 사용해 접근가능 */
   const queryClient = useQueryClient();
@@ -54,6 +55,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   /* 새로고침할 경우 실행할 함수 */
   const onRefresh = async () => {
     setRefreshing(true);
+
     /* movies category를 가진 쿼리를 모두 refetch함 */
     await queryClient.refetchQueries(["movies"]);
     setRefreshing(false);
