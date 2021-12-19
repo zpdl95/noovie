@@ -1,6 +1,12 @@
+import { useNavigation } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
 import React from "react";
-import { StyleSheet, useColorScheme, View } from "react-native";
+import {
+  StyleSheet,
+  TouchableWithoutFeedback,
+  useColorScheme,
+  View,
+} from "react-native";
 import styled from "styled-components/native";
 import { makeImgPath } from "../utils";
 import Poster from "./Poster";
@@ -55,6 +61,15 @@ const Slide: React.FC<SlideProps> = ({
   overview,
 }) => {
   const isDark = useColorScheme() === "dark";
+
+  /* useNavigation hook은 navigation prop을 사용할 수 있게 해주는 함수다 */
+  const navigation = useNavigation();
+  const goToDetail = () => {
+    /* navigate는 다른 screen으로 이동해주는 함수
+    첫번째인자로 screen이름을 넣으면 같은 Tab or Stack Navigator안에서 이동
+    다른 Navigator에 있는 screen으로 이동하려면 ↓ 처럼 작성 */
+    navigation.navigate("Stack", { screen: "Detail" });
+  };
   return (
     <View style={{ flex: 1 }}>
       <BgImg
@@ -66,18 +81,20 @@ const Slide: React.FC<SlideProps> = ({
         intensity={100}
         style={StyleSheet.absoluteFill}
       >
-        <Wrapper>
-          <Poster path={posterPath} />
-          <Column>
-            <Title isDark={isDark}>{originalTitle}</Title>
-            <Vote isDark={isDark}>⭐ {voteAverage}</Vote>
-            <Overview isDark={isDark}>
-              {overview.length > 100
-                ? `${overview.split(" ").slice(0, 21).join(" ")} ...`
-                : `${overview}`}
-            </Overview>
-          </Column>
-        </Wrapper>
+        <TouchableWithoutFeedback onPress={goToDetail}>
+          <Wrapper>
+            <Poster path={posterPath} />
+            <Column>
+              <Title isDark={isDark}>{originalTitle}</Title>
+              <Vote isDark={isDark}>⭐ {voteAverage}</Vote>
+              <Overview isDark={isDark}>
+                {overview.length > 100
+                  ? `${overview.split(" ").slice(0, 21).join(" ")} ...`
+                  : `${overview}`}
+              </Overview>
+            </Column>
+          </Wrapper>
+        </TouchableWithoutFeedback>
       </BlurView>
     </View>
   );

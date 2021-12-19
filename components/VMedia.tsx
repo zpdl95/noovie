@@ -1,4 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
+import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Poster from "./Poster";
 import Votes from "./Votes";
@@ -25,15 +27,27 @@ const VMedia: React.FC<VMediaProps> = ({
   posterPath,
   originalTitle,
   voteAverage,
-}) => (
-  <Movie>
-    <Poster path={posterPath} />
-    <Title>
-      {originalTitle.slice(0, 10)}
-      {originalTitle.length > 10 ? "..." : null}
-    </Title>
-    <Votes votes={voteAverage} />
-  </Movie>
-);
+}) => {
+  /* useNavigation hook은 navigation prop을 사용할 수 있게 해주는 함수다 */
+  const navigation = useNavigation();
+  const goToDetail = () => {
+    /* navigate는 다른 screen으로 이동해주는 함수
+    첫번째인자로 screen이름을 넣으면 같은 Tab or Stack Navigator안에서 이동
+    다른 Navigator에 있는 screen으로 이동하려면 ↓ 처럼 작성 */
+    navigation.navigate("Stack", { screen: "Detail" });
+  };
+  return (
+    <TouchableOpacity onPress={goToDetail}>
+      <Movie>
+        <Poster path={posterPath} />
+        <Title>
+          {originalTitle.slice(0, 10)}
+          {originalTitle.length > 10 ? "..." : null}
+        </Title>
+        <Votes votes={voteAverage} />
+      </Movie>
+    </TouchableOpacity>
+  );
+};
 
 export default VMedia;

@@ -1,4 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
+import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Poster from "./Poster";
 import Votes from "./Votes";
@@ -49,32 +51,42 @@ const HMedia: React.FC<HMediaProps> = ({
   releaseDate,
   voteAverage,
 }) => {
+  /* useNavigation hook은 navigation prop을 사용할 수 있게 해주는 함수다 */
+  const navigation = useNavigation();
+  const goToDetail = () => {
+    /* navigate는 다른 screen으로 이동해주는 함수
+    첫번째인자로 screen이름을 넣으면 같은 Tab or Stack Navigator안에서 이동
+    다른 Navigator에 있는 screen으로 이동하려면 ↓ 처럼 작성 */
+    navigation.navigate("Stack", { screen: "Detail" });
+  };
   return (
-    <HMovie>
-      <Poster path={posterPath} />
-      <HColumn>
-        <Title>
-          {originalTitle.length > 30
-            ? `${originalTitle.slice(0, 30)}...`
-            : originalTitle}
-        </Title>
-        {releaseDate ? (
-          <Release>
-            {new Date(releaseDate).toLocaleDateString("ko", {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })}
-          </Release>
-        ) : null}
-        {voteAverage ? <Votes votes={voteAverage} /> : null}
-        <Overview>
-          {overview.length > 100
-            ? `${overview.split(" ").slice(0, 21).join(" ")} ...`
-            : overview}
-        </Overview>
-      </HColumn>
-    </HMovie>
+    <TouchableOpacity onPress={goToDetail}>
+      <HMovie>
+        <Poster path={posterPath} />
+        <HColumn>
+          <Title>
+            {originalTitle.length > 30
+              ? `${originalTitle.slice(0, 30)}...`
+              : originalTitle}
+          </Title>
+          {releaseDate ? (
+            <Release>
+              {new Date(releaseDate).toLocaleDateString("ko", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </Release>
+          ) : null}
+          {voteAverage ? <Votes votes={voteAverage} /> : null}
+          <Overview>
+            {overview.length > 100
+              ? `${overview.split(" ").slice(0, 21).join(" ")} ...`
+              : overview}
+          </Overview>
+        </HColumn>
+      </HMovie>
+    </TouchableOpacity>
   );
 };
 

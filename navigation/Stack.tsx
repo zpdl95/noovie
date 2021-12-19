@@ -1,31 +1,15 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Text, TouchableOpacity, View } from "react-native";
-
-/* StackNavigator에 있는 navigation props의 사용 방법 */
-const ScreenOne = ({ navigation: { navigate } }) => (
-  <TouchableOpacity onPress={() => navigate("Two")}>
-    <Text>go to Two</Text>
-  </TouchableOpacity>
-);
-const ScreenTwo = ({ navigation: { navigate } }) => (
-  <TouchableOpacity onPress={() => navigate("Three")}>
-    <Text>go to Three</Text>
-  </TouchableOpacity>
-);
-const ScreenThree = ({ navigation: { goBack } }) => (
-  <TouchableOpacity onPress={() => goBack()}>
-    <Text>go back</Text>
-  </TouchableOpacity>
-);
+import Detail from "../screens/Detail";
 
 const NativeStack = createNativeStackNavigator();
 
+/* StackNavigator에 있는 navigation prop의 사용 방법
+'const ScreenOne = ({ navigation: { navigate } }) =>'
+모든 Screen컴포넌트에 들어간 component는 navigation prop를 가진다 */
 const Stack = () => (
   <NativeStack.Navigator>
-    <NativeStack.Screen name="One" component={ScreenOne} />
-    <NativeStack.Screen name="Two" component={ScreenTwo} />
-    <NativeStack.Screen name="Three" component={ScreenThree} />
+    <NativeStack.Screen name="Detail" component={Detail} />
   </NativeStack.Navigator>
 );
 export default Stack;
