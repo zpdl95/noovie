@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
@@ -29,6 +29,9 @@ const HSeperator = styled.View`
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
+  /* isRefetching을 이용해서 refreshing을 만들면 component는 생성할때마나 refreshing이 동작해서 불편함
+  때문에 refreshing state를 만들어 사용 */
+  const [refreshing, setRefreshing] = useState(false);
   /* queryClient는 모든 cache, query를 관리함 
   useQueryClient()를 사용해 접근가능 */
   const queryClient = useQueryClient();
@@ -41,26 +44,19 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   array타입을 사용해서 category를 만들어 주거나 변수를 추가할 수 있다.
   `useQuery(["movies", "nowPlaying"], ...)` movies이라는 category에 nowPlaying라는 id를 줌
   `useQuery(["movies", "nowPlaying", {preview: true}], ...)` {preview: ture}라는 변수를 추가 */
-  const {
-    isLoading: nowPlayingLoading,
-    data: nowPlayingData,
-    isRefetching: isRefetchingNowPlaying,
-  } = useQuery<MovieResponse>(["movies", "nowPlaying"], moviesApi.nowPlaying);
-  const {
-    isLoading: upcomingLoading,
-    data: upcomingData,
-    isRefetching: isRefetchingUpcoming,
-  } = useQuery<MovieResponse>(["movies", "upComing"], moviesApi.upcoming);
-  const {
-    isLoading: trendingLoading,
-    data: trendingData,
-    isRefetching: isrefetchingTrending,
-  } = useQuery<MovieResponse>(["movies", "trending"], moviesApi.trending);
+  const { isLoading: nowPlayingLoading, data: nowPlayingData } =
+    useQuery<MovieResponse>(["movies", "nowPlaying"], moviesApi.nowPlaying);
+  const { isLoading: upcomingLoading, data: upcomingData } =
+    useQuery<MovieResponse>(["movies", "upComing"], moviesApi.upcoming);
+  const { isLoading: trendingLoading, data: trendingData } =
+    useQuery<MovieResponse>(["movies", "trending"], moviesApi.trending);
 
   /* 새로고침할 경우 실행할 함수 */
   const onRefresh = async () => {
+    setRefreshing(true);
     /* movies category를 가진 쿼리를 모두 refetch함 */
-    queryClient.refetchQueries(["movies"]);
+    await queryClient.refetchQueries(["movies"]);
+    setRefreshing(false);
   };
 
   const renderHMedia = ({ item }: { item: Movie }) => (
@@ -75,8 +71,6 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   const movieKeyExtractor = (item: Movie) => item.id + "";
 
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
-  const refreshing =
-    isRefetchingNowPlaying || isRefetchingUpcoming || isrefetchingTrending;
 
   /* 'upcomingData ?' 와 같이 작성하는 이유는 typescript를 작성할때
       이 데이터가 있을 수 도 있고 없을 수도 있어서 '?'를 넣어줘야 한다 */
