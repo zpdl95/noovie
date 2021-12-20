@@ -20,14 +20,36 @@ export interface Movie {
   vote_count: number;
 }
 
+export interface TV {
+  name: string;
+  original_name: string;
+  origin_country: string[];
+  vote_count: number;
+  backdrop_path: string | null;
+  vote_average: number;
+  genre_ids: number[];
+  id: number;
+  original_language: string;
+  overview: string;
+  poster_path: string | null;
+  first_air_date: string;
+  popularity: number;
+  media_type: string;
+}
+
 interface BaseResponse {
   page: number;
   total_results: number;
   total_page: number;
 }
 
+/* input data의 실제 이름을 작성 results이름의 데이터를 받기 때문에 이렇게 작성 */
 export interface MovieResponse extends BaseResponse {
   results: Movie[];
+}
+
+export interface TVResponse extends BaseResponse {
+  results: TV[];
 }
 
 export const moviesApi = {
@@ -45,7 +67,7 @@ export const moviesApi = {
     ).then((res) => res.json()),
 
   /* react-query의 fetcher들은 useQuery에서 주어진 값을 인풋값으로 사용할 수 있다. */
-  search: ({ queryKey }) => {
+  search: ({ queryKey }: { queryKey: any[] }) => {
     const [_, query] = queryKey;
     return fetch(
       `${BASE_URL}/search/movie?api_key=${API_KEY}&language=ko&page=1&region=KR&query=${query}`
@@ -66,7 +88,7 @@ export const tvApi = {
     fetch(
       `${BASE_URL}/tv/top_rated?api_key=${API_KEY}&language=ko&page=1&region=KR`
     ).then((res) => res.json()),
-  search: ({ queryKey }) => {
+  search: ({ queryKey }: { queryKey: any[] }) => {
     const [_, query] = queryKey;
     return fetch(
       `${BASE_URL}/search/tv?api_key=${API_KEY}&language=ko&page=1&region=KR&query=${query}`

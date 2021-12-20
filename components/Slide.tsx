@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import styled from "styled-components/native";
+import { Movie } from "../api";
 import { makeImgPath } from "../utils";
 import Poster from "./Poster";
 
@@ -50,6 +51,7 @@ interface SlideProps {
   originalTitle: string;
   voteAverage: number;
   overview: string;
+  fullData: Movie;
 }
 
 /* 설정한 인터페이스를 컴포넌트에 적용 */
@@ -59,6 +61,7 @@ const Slide: React.FC<SlideProps> = ({
   originalTitle,
   voteAverage,
   overview,
+  fullData,
 }) => {
   const isDark = useColorScheme() === "dark";
 
@@ -71,7 +74,7 @@ const Slide: React.FC<SlideProps> = ({
     /* navigate로 이동할때 screen name과 params에 값을 전달한다 */
     navigation.navigate("Stack", {
       screen: "Detail",
-      params: { originalTitle },
+      params: { ...fullData },
     });
   };
   return (
