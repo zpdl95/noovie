@@ -76,7 +76,7 @@ export const moviesApi = {
   detail: ({ queryKey }: { queryKey: any[] }) => {
     const [_, id] = queryKey;
     return fetch(
-      `${BASE_URL}/movie/${id}?api_key=${API_KEY}&append_to_response=videos,images` /* 이 api는 &append_to_response를 사용해 비디오와 이미지를 같이 가져올 수 있다 */
+      `${BASE_URL}/movie/${id}?api_key=${API_KEY}&append_to_response=videos,images&language=ko` /* 이 api는 &append_to_response를 사용해 비디오와 이미지를 같이 가져올 수 있다 */
     ).then((res) => res.json());
   },
 };
@@ -103,7 +103,7 @@ export const tvApi = {
   detail: ({ queryKey }: { queryKey: any[] }) => {
     const [_, id] = queryKey;
     return fetch(
-      `${BASE_URL}/tv/${id}?api_key=${API_KEY}&append_to_response=videos,images`
+      `${BASE_URL}/tv/${id}?api_key=${API_KEY}&append_to_response=videos,images&language=ko`
     ).then((res) => res.json());
   },
 };

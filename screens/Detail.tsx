@@ -1,6 +1,12 @@
 import React, { useEffect } from "react";
 import styled from "styled-components/native";
-import { Dimensions, StyleSheet, Linking } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  TouchableOpacity,
+  Share,
+  Platform,
+} from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { LinearGradient } from "expo-linear-gradient";
 import { useQuery } from "react-query";
@@ -77,13 +83,6 @@ const Detail: React.FC<DetailScreenProps> = ({
     isMovie ? moviesApi.detail : tvApi.detail
   );
 
-  /* component가 didmount됐을 때 실행시킴  */
-  useEffect(() => {
-    setOptions({
-      title: "original_title" in params ? "Movie" : "TV Show",
-    });
-  }, []);
-
   const openYTLink = async (videoID: string) => {
     const baseUrl = `http://m.youtube.com/watch?v=${videoID}`;
 
@@ -94,6 +93,48 @@ const Detail: React.FC<DetailScreenProps> = ({
     /* 임시 브라우저 열어서 실행 */
     await WebBrowser.openBrowserAsync(baseUrl);
   };
+
+  /* react-native안에 있는 공유기능.
+  android에서는 message만 공유된다. 쓰레기 ㄷㄷ */
+  const shareMedia = async () => {
+    const isAndroid = Platform.OS === "android";
+    const homepage = isMovie
+      ? `https://www.imdb.com/title/${data.imdb_id}/`
+      : data.homepage;
+    if (isAndroid) {
+      await Share.share({
+        message: `${params.overview}\n${
+          "original_title" in params
+            ? params.original_title
+            : params.original_name
+        }: ${homepage}`,
+      });
+    } else {
+      await Share.share({
+        url: homepage,
+        title:
+          "original_title" in params
+            ? params.original_title
+            : params.original_name,
+      });
+    }
+  };
+
+  const ShareButton = () => (
+    <TouchableOpacity onPress={shareMedia}>
+      <Ionicons name="share-social" color="white" size={24} />
+    </TouchableOpacity>
+  );
+
+  /* component가 didmount됐을 때 실행시킴  */
+  useEffect(() => {
+    /* header를 건드리는 이 옵션은 rerendering하지 않는다
+    따라서 작동해야될 컴포넌트를 넣는다면 rerendering할 수 있도록 만들자 */
+    setOptions({
+      title: "original_title" in params ? "Movie" : "TV Show",
+      headerRight: () => (data ? <ShareButton /> : null),
+    });
+  }, [data]);
 
   return (
     <Container>
