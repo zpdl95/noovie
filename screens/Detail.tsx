@@ -1,12 +1,15 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
-import { Dimensions, StyleSheet } from "react-native";
 import styled from "styled-components/native";
+import { Dimensions, StyleSheet, Linking } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { LinearGradient } from "expo-linear-gradient";
+import { useQuery } from "react-query";
+import { Ionicons } from "@expo/vector-icons";
+import * as WebBrowser from "expo-web-browser";
 import { Movie, moviesApi, TV, tvApi } from "../api";
 import Poster from "../components/Poster";
 import { makeImgPath } from "../utils";
-import { useQuery } from "react-query";
+import Loader from "../components/Loader";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -34,10 +37,23 @@ const Title = styled.Text`
   margin-left: 15px;
 `;
 
+const Data = styled.View`
+  padding: 0 20px;
+`;
+
 const Overview = styled.Text`
   color: ${(props) => props.theme.textColor};
-  margin-top: 30px;
-  padding: 0 20px;
+  margin: 20px 0;
+`;
+
+const VideoBtn = styled.TouchableOpacity`
+  flex-direction: row;
+`;
+const BtnText = styled.Text`
+  color: white;
+  margin-bottom: 10px;
+  line-height: 24px;
+  margin-left: 10px;
 `;
 
 /* Root Navigator가 갖고 있는 Screen들의 type을 만들어야한다 */
@@ -55,22 +71,11 @@ const Detail: React.FC<DetailScreenProps> = ({
   navigation: { setOptions },
   route: { params },
 }) => {
-  const { isLoading: moviesLoading, data: moviesData } = useQuery([
-    "movies",
-    params.id,
-    moviesApi.detail,
-    {
-      enabled: "original_title" in params /* title이 있으면 실행 */,
-    },
-  ]);
-  const { isLoading: tvLoading, data: tvData } = useQuery([
-    "tv",
-    params.id,
-    tvApi.detail,
-    {
-      enabled: "original_name" in params /* name이 있으면 실행 */,
-    },
-  ]);
+  const isMovie = "original_title" in params;
+  const { isLoading, data } = useQuery(
+    [isMovie ? "movies" : "tv", params.id],
+    isMovie ? moviesApi.detail : tvApi.detail
+  );
 
   /* component가 didmount됐을 때 실행시킴  */
   useEffect(() => {
@@ -78,6 +83,18 @@ const Detail: React.FC<DetailScreenProps> = ({
       title: "original_title" in params ? "Movie" : "TV Show",
     });
   }, []);
+
+  const openYTLink = async (videoID: string) => {
+    const baseUrl = `http://m.youtube.com/watch?v=${videoID}`;
+
+    /* react-native에 있는 Linking을 사용해 url을 열수 있다.
+    앱이 있으면 앱으로 없으면 웹브라우저로 실행 */
+    // await Linking.openURL(baseUrl);
+
+    /* 임시 브라우저 열어서 실행 */
+    await WebBrowser.openBrowserAsync(baseUrl);
+  };
+
   return (
     <Container>
       <Header>
@@ -98,7 +115,18 @@ const Detail: React.FC<DetailScreenProps> = ({
           </Title>
         </Column>
       </Header>
-      <Overview>{params.overview}</Overview>
+      <Data>
+        <Overview>{params.overview}</Overview>
+        {isLoading ? <Loader /> : null}
+        {data?.videos?.results?.map((video) =>
+          video.site === "YouTube" ? (
+            <VideoBtn key={video.key} onPress={() => openYTLink(video.key)}>
+              <Ionicons name="logo-youtube" color="red" size={24} />
+              <BtnText>{video.name}</BtnText>
+            </VideoBtn>
+          ) : null
+        )}
+      </Data>
     </Container>
   );
 };

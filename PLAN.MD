@@ -16,3 +16,4 @@
 16. npm i react-native-swiper@next -> 위의 swiper는 웹, android, ios 전부다 가능. 이놈은 android, ios만 가능(ios에서는 웹swiper을 사용하면 움직여서 이놈으로 바꿈)
 17. npm i react-query -> Hooks를 통해 fetch데이터에 접근할 수 있게 해줌. loading state도 알려주고, caching, 무한스크롤도 지원함
 18. install expo-linear-gradient -> 그레디언트 기능을 가진 컴포넌트 설치
+19. expo install expo-web-browser -> 주소를 받으면 웹브라우저를 실행시키는 컴포넌트
