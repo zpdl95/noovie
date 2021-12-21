@@ -5,7 +5,7 @@
 5. expo install expo-asset -> 이미지등 필요한 로컬데이터를 로딩할때 사용
 6. npm install @react-navigation/native -> 리액트네비게이션 설치
 7. expo install react-native-screens react-native-safe-area-context -> create-react-native-app으로 생성했기때문에 expo프로젝트에도 리엑트네비게이션을 사용할것이라고 알려줘야한다
-8. npx pod-install ios -> 맥북으로 개발중이라면 설치해야한다
+8. npx pod-install ios -> 맥북으로 개발중이라면 설치해야한다(새로운 컴포넌트를 설치한뒤 매번 실행)
 9. npm install @react-navigation/bottom-tabs -> 바텀탭네비게이션 설치
 10. npm install @react-navigation/native-stack -> 네이티브스택네비게이션 설치
 11. npm install styled-components -> css스타일을 사용하기위해 설치. 사용하기 쉽고 prop에 접근가능한 스타일 컴포넌트
@@ -15,3 +15,4 @@
 15. expo install expo-blur -> expo의 블러처리 뷰컴포넌트를 설치(npx pod-install ios 맥사용중이면 해야함)
 16. npm i react-native-swiper@next -> 위의 swiper는 웹, android, ios 전부다 가능. 이놈은 android, ios만 가능(ios에서는 웹swiper을 사용하면 움직여서 이놈으로 바꿈)
 17. npm i react-query -> Hooks를 통해 fetch데이터에 접근할 수 있게 해줌. loading state도 알려주고, caching, 무한스크롤도 지원함
+18. install expo-linear-gradient -> 그레디언트 기능을 가진 컴포넌트 설치
