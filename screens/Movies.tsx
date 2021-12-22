@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
-import { Alert, Dimensions, FlatList } from "react-native";
+import { Dimensions, FlatList } from "react-native";
 import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
 import { Movie, MovieResponse, moviesApi } from "../api";
 import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
 import Loader from "../components/Loader";
 import HList from "../components/HList";
+import { getNextPage, loadMore } from "../utils";
 
 const ListTitle = styled.Text`
   color: white;
@@ -49,10 +50,38 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     useQuery<MovieResponse>(["movies", "nowPlaying"], moviesApi.nowPlaying);
 
   /* useInfiniteQuery가 가져오는 데이터는 useQuery와 다르다 */
-  const { isLoading: upcomingLoading, data: upcomingData } =
-    useInfiniteQuery<MovieResponse>(["movies", "upComing"], moviesApi.upcoming);
-  const { isLoading: trendingLoading, data: trendingData } =
-    useQuery<MovieResponse>(["movies", "trending"], moviesApi.trending);
+  const {
+    isLoading: upcomingLoading,
+    data: upcomingData,
+    hasNextPage:
+      upcomingHasNextPage /* 다음페이지가 있으면 true 없으면 false */,
+    fetchNextPage: upcomingFetchNextPage /* 다음페이지를 불러오는 fetch함수 */,
+    isFetchingNextPage: upcomingIsFetchingNextPage,
+  } = useInfiniteQuery<MovieResponse>(
+    ["movies", "upComing"],
+    moviesApi.upcoming,
+    {
+      /* getNextPageParam = 다음페이지를 알아내는 함수
+        currentPage = 현재 위치한 페이지 데이터 */
+      getNextPageParam: (currentPage) => {
+        const nextPage = currentPage.page + 1;
+        return nextPage > currentPage.total_pages ? null : nextPage;
+      },
+    }
+  );
+  const {
+    isLoading: trendingLoading,
+    data: trendingData,
+    hasNextPage: trendingHasNextPage,
+    fetchNextPage: trendingFetchNextPage,
+    isFetchingNextPage: trendingIsFetchNextPage,
+  } = useInfiniteQuery<MovieResponse>(
+    ["movies", "trending"],
+    moviesApi.trending,
+    {
+      getNextPageParam: getNextPage,
+    }
+  );
 
   /* 새로고침할 경우 실행할 함수 */
   const onRefresh = async () => {
@@ -73,11 +102,14 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     />
   );
 
+  const memoizedRenderHMedia = useMemo(
+    () => renderHMedia,
+    [upcomingData?.pages.map((page) => page.results).flat()]
+  );
+
   const movieKeyExtractor = (item: Movie) => item.id + "";
 
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
-
-  const loadMore = () => {};
 
   /* 'upcomingData ?' 와 같이 작성하는 이유는 typescript를 작성할때
       이 데이터가 있을 수 도 있고 없을 수도 있어서 '?'를 넣어줘야 한다 */
@@ -85,8 +117,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     <Loader />
   ) : upcomingData ? (
     <FlatList
-      onEndReached={loadMore}
-      onEndReachedThreshold={0.3}
+      onEndReached={() => loadMore(upcomingHasNextPage, upcomingFetchNextPage)}
       refreshing={refreshing}
       onRefresh={onRefresh}
       ListHeaderComponent={
@@ -114,7 +145,13 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
             ))}
           </Swiper>
           {trendingData ? (
-            <HList title="Trending Movies" data={trendingData?.results} />
+            <HList
+              title="Trending Movies"
+              data={trendingData.pages.map((page) => page.results).flat()}
+              hasNextPage={trendingHasNextPage}
+              fetchNextPage={trendingFetchNextPage}
+              isFetchingNextPage={trendingIsFetchNextPage}
+            />
           ) : null}
           <ComingSoonTitle>Coming soon</ComingSoonTitle>
         </>
@@ -123,7 +160,10 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
       data={upcomingData.pages.map((page) => page.results).flat()}
       keyExtractor={movieKeyExtractor}
       ItemSeparatorComponent={HSeperator}
-      renderItem={renderHMedia}
+      renderItem={memoizedRenderHMedia}
+      ListFooterComponent={
+        <>{upcomingIsFetchingNextPage ? <Loader /> : null}</>
+      }
     />
   ) : null;
 };

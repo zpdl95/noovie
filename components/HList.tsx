@@ -2,6 +2,8 @@ import React from "react";
 import { FlatList } from "react-native";
 import styled from "styled-components/native";
 import { Movie, TV } from "../api";
+import { loadMore } from "../utils";
+import Loader from "./Loader";
 import VMedia from "./VMedia";
 
 const ListContainer = styled.View`
@@ -25,16 +27,23 @@ interface HListProps {
   data: any[];
 }
 
-const HList: React.FC<HListProps> = ({ title, data }) => (
+const HList: React.FC<HListProps> = ({
+  title,
+  data,
+  hasNextPage,
+  fetchNextPage,
+  isFetchingNextPage,
+}) => (
   <ListContainer>
     <ListTitle>{title}</ListTitle>
     <FlatList
+      onEndReached={() => loadMore(hasNextPage, fetchNextPage)}
       horizontal
-      keyExtractor={(item) => item.id + ""}
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{ paddingHorizontal: 30 }}
       data={data}
       ItemSeparatorComponent={HListSeperator}
+      keyExtractor={(item) => item.id + ""}
       renderItem={({ item }: { item: Movie | TV }) => (
         <VMedia
           posterPath={item.poster_path || ""}
@@ -45,6 +54,11 @@ const HList: React.FC<HListProps> = ({ title, data }) => (
           fullData={item}
         />
       )}
+      ListFooterComponentStyle={{
+        marginBottom: 25,
+        justifyContent: "center",
+      }}
+      ListFooterComponent={<>{isFetchingNextPage ? <Loader /> : null}</>}
     />
   </ListContainer>
 );

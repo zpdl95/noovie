@@ -53,13 +53,18 @@ export interface TVResponse extends BaseResponse {
 }
 
 export const moviesApi = {
-  trending: () =>
+  trending: ({ pageParam }: { pageParam: any[] }) =>
     fetch(
-      `${BASE_URL}/trending/movie/week?api_key=${API_KEY}&language=ko&page=1&region=KR`
+      `${BASE_URL}/trending/movie/week?api_key=${API_KEY}&language=ko&page=${
+        pageParam ? pageParam : 1
+      }&region=KR`
     ).then((res) => res.json()),
-  upcoming: () =>
+  /* fetcher의 첫번째 인자로 pageParam을 갖는다 */
+  upcoming: ({ pageParam }: { pageParam: any[] }) =>
     fetch(
-      `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=ko&page=1&region=KR`
+      `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=ko&page=${
+        pageParam ? pageParam : 1
+      }&region=KR`
     ).then((res) => res.json()),
   nowPlaying: () =>
     fetch(
@@ -82,17 +87,23 @@ export const moviesApi = {
 };
 
 export const tvApi = {
-  trending: () =>
+  trending: ({ pageParam }: { pageParam: any[] }) =>
     fetch(
-      `${BASE_URL}/trending/tv/week?api_key=${API_KEY}&language=ko&page=1&region=KR`
+      `${BASE_URL}/trending/tv/week?api_key=${API_KEY}&language=ko&page=${
+        pageParam ? pageParam : 1
+      }&region=KR`
     ).then((res) => res.json()),
-  airingToday: () =>
+  airingToday: ({ pageParam }: { pageParam: any[] }) =>
     fetch(
-      `${BASE_URL}/tv/airing_today?api_key=${API_KEY}&language=ko&page=1&region=KR`
+      `${BASE_URL}/tv/airing_today?api_key=${API_KEY}&language=ko&page=${
+        pageParam ? pageParam : 1
+      }&region=KR`
     ).then((res) => res.json()),
-  topRated: () =>
+  topRated: ({ pageParam }: { pageParam: any[] }) =>
     fetch(
-      `${BASE_URL}/tv/top_rated?api_key=${API_KEY}&language=ko&page=1&region=KR`
+      `${BASE_URL}/tv/top_rated?api_key=${API_KEY}&language=ko&page=${
+        pageParam ? pageParam : 1
+      }&region=KR`
     ).then((res) => res.json()),
   search: ({ queryKey }: { queryKey: any[] }) => {
     const [_, query] = queryKey;
