@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
-import { Dimensions, FlatList } from "react-native";
-import { useQuery, useQueryClient } from "react-query";
+import { Alert, Dimensions, FlatList } from "react-native";
+import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
 import { Movie, MovieResponse, moviesApi } from "../api";
 import Slide from "../components/Slide";
 import HMedia from "../components/HMedia";
@@ -47,8 +47,10 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   `useQuery(["movies", "nowPlaying", {preview: true}], ...)` {preview: ture}라는 변수를 추가 */
   const { isLoading: nowPlayingLoading, data: nowPlayingData } =
     useQuery<MovieResponse>(["movies", "nowPlaying"], moviesApi.nowPlaying);
+
+  /* useInfiniteQuery가 가져오는 데이터는 useQuery와 다르다 */
   const { isLoading: upcomingLoading, data: upcomingData } =
-    useQuery<MovieResponse>(["movies", "upComing"], moviesApi.upcoming);
+    useInfiniteQuery<MovieResponse>(["movies", "upComing"], moviesApi.upcoming);
   const { isLoading: trendingLoading, data: trendingData } =
     useQuery<MovieResponse>(["movies", "trending"], moviesApi.trending);
 
@@ -75,12 +77,16 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
 
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
 
+  const loadMore = () => {};
+
   /* 'upcomingData ?' 와 같이 작성하는 이유는 typescript를 작성할때
       이 데이터가 있을 수 도 있고 없을 수도 있어서 '?'를 넣어줘야 한다 */
   return loading ? (
     <Loader />
   ) : upcomingData ? (
     <FlatList
+      onEndReached={loadMore}
+      onEndReachedThreshold={0.3}
       refreshing={refreshing}
       onRefresh={onRefresh}
       ListHeaderComponent={
@@ -113,7 +119,8 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
           <ComingSoonTitle>Coming soon</ComingSoonTitle>
         </>
       }
-      data={upcomingData.results}
+      /* [[movie],[movie],[movie]...] 형태의 데이터를 flat()함수로 돌림 */
+      data={upcomingData.pages.map((page) => page.results).flat()}
       keyExtractor={movieKeyExtractor}
       ItemSeparatorComponent={HSeperator}
       renderItem={renderHMedia}
@@ -146,4 +153,6 @@ data prop에 데이터를 array형 데이터를 넣어주고
 renderItem에 컴포넌트를 리턴하는 함수를 넣어준다. 이 함수는 {item, index, seperate} 인자를 받는다
 ItemSeparatorComponent는 item사이에 넣을 컴포넌트를 넣으면 된다
 keyExtractor는 각각의 데이터에서 key값으로 사용할 데이터(문자열)를 리턴 받는다.
-ListHeaderComponent에 렌더링하는 컴포넌트 윗부분에 넣을 컴포넌트를 넣어준다(<></> = fragment = 여러개를 넣어서 render 할 수 있게 해줌 )*/
+ListHeaderComponent에 렌더링하는 컴포넌트 윗부분에 넣을 컴포넌트를 넣어준다(<></> = fragment = 여러개를 넣어서 render 할 수 있게 해줌 ) 
+onEndReached={loadMore} = 스크롤링이 거의 끝날때쯤 뭘 실행시킬 것인가
+onEndReachedThreshold={0.3} = 스크롤링이 끝날때쯤의 기준지점 설정 */
